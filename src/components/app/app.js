@@ -11,7 +11,6 @@ const listData = [
   {label: 'Push elements', important: true, id: 3}
 ];
 
-
 const App = () => {
   return (
     <div className="todo-app">
