@@ -7,7 +7,7 @@ import './app.css'
 import AddItem from "../add-item";
 
 export default class App extends Component {
-  newId = 32515;
+  newId = 1;
   state = {
     listData: [
       this.createItem('Drink Cofee'),
@@ -15,20 +15,24 @@ export default class App extends Component {
       this.createItem('Push elements to the sky')
     ]
   };
+
   createItem(label) {
     return {
       label,
       important: false,
       done: false,
-      id: this.newId++
+      id: this.newId++,
+      visible: true
     }
   };
+
   onToggleProperty = (arr, type, id) => {
     const index = arr.findIndex((el) => el.id === id);
-    const oldItem = arr[index];
-    const newItem = {...oldItem, [type]: !oldItem[type]};
+    const oldObj = arr[index];
+    const newObj = {...oldObj, [type]: !oldObj[type]};
+    
     return [...arr.slice(0, index),
-            newItem,
+            newObj,
             ...arr.slice(index + 1)];
   };
 
@@ -57,13 +61,52 @@ export default class App extends Component {
       })
     }
   };
-  onDeleted = (id) => {
+
+  onDeleting = (id) => {
     this.setState(({ listData }) => {
       return {
         listData: (listData.filter((item) => item.id !== id))
       }
     })
   };
+  onSearch = (text) => {
+    this.setState(({ listData }) => {
+      const ourData = [...listData];
+      ourData.forEach((el, index) => {
+        let checkEl = el.label.toLowerCase().indexOf(text.toLowerCase());
+        checkEl === -1 ? el.visible = false : el.visible = true;
+      });
+      return { listData: ourData }
+    })
+  };
+  allDone = () => {
+    this.setState(({ listData }) => {
+      const ourData = [...listData];
+      ourData.forEach(el => {
+        el.done === true ? el.visible = true : el.visible = false;
+      });
+      return { listData: ourData }
+    })
+  };
+  allActive = () => {
+    this.setState(({ listData }) => {
+      const ourData = [...listData];
+      ourData.forEach(el => {
+        el.done === false ? el.visible = true : el.visible = false;
+      });
+      return { listData: ourData }
+    })
+  };
+  allShow = () => {
+    this.setState(({ listData }) => {
+      const ourData = [...listData];
+      ourData.forEach(el => {
+        el.visible = true;
+      });
+      return { listData: ourData }
+    })
+  };
+
   render() {
     const doneItems = this.state.listData.filter(el => el.done).length;
     const toDoItems = this.state.listData.length - doneItems;
@@ -71,11 +114,13 @@ export default class App extends Component {
       <div className="todo-app">
         <AppHeader toDo={toDoItems} done={doneItems}/>
         <div className="top-panel d-flex">
-          <SearchPanel />
-          <ItemStatusFilter />
+          <SearchPanel onSearch={this.onSearch}/>
+          <ItemStatusFilter allDone={this.allDone}
+                            allActive={this.allActive}
+                            allShow={this.allShow}/>
         </div>
         <TodoList listData={ this.state.listData }
-                  onDeleted={this.onDeleted}
+                  onDeleting={this.onDeleting}
                   onToggleDone={this.onToggleDone}
                   onToggleImportant={this.onToggleImportant}/>
         <AddItem onAdding={this.onAdding} />
