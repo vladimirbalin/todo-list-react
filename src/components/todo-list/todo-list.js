@@ -2,9 +2,9 @@ import React from "react";
 import TodoListItem from "../todo-list-item";
 import './todo-list.css'
 
-const TodoList = ({ listData, onDeleting, onToggleDone, onToggleImportant}) => {
-  const visibleCheckList = listData.filter(el => el.visible);
-  const elements =  visibleCheckList.map((item) => {
+const TodoList = ({ showingItems, onDeleting, onToggleDone, onToggleImportant}) => {
+
+  const elements =  showingItems.map((item) => {
     const { id, ...itemProps } = item;
 
     return (

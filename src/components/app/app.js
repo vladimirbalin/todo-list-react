@@ -13,7 +13,8 @@ export default class App extends Component {
       this.createItem('Drink Cofee'),
       this.createItem('Fly High'),
       this.createItem('Push elements to the sky')
-    ]
+    ],
+    filter: 'all'
   };
 
   createItem(label) {
@@ -79,47 +80,30 @@ export default class App extends Component {
       return { listData: ourData }
     })
   };
-  allDone = () => {
-    this.setState(({ listData }) => {
-      const ourData = [...listData];
-      ourData.forEach(el => {
-        el.done === true ? el.visible = true : el.visible = false;
-      });
-      return { listData: ourData }
-    })
+  filterItems = (items, filter) => {
+    return filter === 'all' ? items :
+      filter === 'active' ? items.filter((item) => !item.done) :
+      filter === 'done' ? items.filter((item) => item.done) : items;
   };
-  allActive = () => {
-    this.setState(({ listData }) => {
-      const ourData = [...listData];
-      ourData.forEach(el => {
-        el.done === false ? el.visible = true : el.visible = false;
-      });
-      return { listData: ourData }
-    })
-  };
-  allShow = () => {
-    this.setState(({ listData }) => {
-      const ourData = [...listData];
-      ourData.forEach(el => {
-        el.visible = true;
-      });
-      return { listData: ourData }
-    })
+  onFilterChange = (filter) => {
+    this.setState( {filter});
   };
 
   render() {
-    const doneItems = this.state.listData.filter(el => el.done).length;
-    const toDoItems = this.state.listData.length - doneItems;
+    const { filter, listData } = this.state;
+    const doneItems = listData.filter(el => el.done).length;
+    const toDoItems = listData.length - doneItems;
+    const visibleCheckList = listData.filter(el => el.visible);
+    const showingItems = this.filterItems(visibleCheckList, filter);
     return (
       <div className="todo-app">
         <AppHeader toDo={toDoItems} done={doneItems}/>
         <div className="top-panel d-flex">
           <SearchPanel onSearch={this.onSearch}/>
-          <ItemStatusFilter allDone={this.allDone}
-                            allActive={this.allActive}
-                            allShow={this.allShow}/>
+          <ItemStatusFilter onFilterChange={this.onFilterChange}
+                            filter={filter}/>
         </div>
-        <TodoList listData={ this.state.listData }
+        <TodoList showingItems={ showingItems }
                   onDeleting={this.onDeleting}
                   onToggleDone={this.onToggleDone}
                   onToggleImportant={this.onToggleImportant}/>
