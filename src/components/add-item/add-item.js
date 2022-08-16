@@ -1,37 +1,33 @@
-import React, { Component } from "react";
+import React, {useRef, useState} from "react";
 import './add-item.css'
 
-export default class AddItem extends Component {
-  inputRef = React.createRef();
-  state = {
-    label: ''
-  };
+export default function AddItem(props) {
+  const [input, setInput] = useState({label: ''  });
+  const inputRef = useRef();
 
-  changeHandler = (e) => {
-    this.setState({
+  const changeHandler = (e) => {
+    setInput({
       label: e.target.value
     })
   };
-  submitHandler = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
-    this.props.onAdding(this.state.label);
-    this.setState({
+    props.onAdding(input.label);
+    setInput({
       label: ''
     });
-    this.inputRef.current.focus();
+    inputRef.current.focus();
   };
 
-  render(){
     return (
-      <form onSubmit={this.submitHandler} className='add-item d-flex'>
+      <form onSubmit={submitHandler} className='add-item d-flex'>
         <input className='form-control add-input' type='text'
                placeholder='type to add'
-               ref={this.inputRef}
-               onChange={this.changeHandler}
-               value={this.state.label}/>
+               ref={inputRef}
+               onChange={changeHandler}
+               value={input.label}/>
         <button className='btn btn-success btn-add'>Add</button>
       </form>
     );
-  }
 }
 

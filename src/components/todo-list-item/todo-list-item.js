@@ -1,13 +1,8 @@
 import React from "react";
 import './todo-list-item.css';
 
-const TodoListItem = (props) => {
-
-
-    const { label, onDeleting, onToggleDone, onToggleImportant, done, important } = props;
-
+const TodoListItem = ({ label, onDeleting, onToggleDone, onToggleImportant, done, important }) => {
     let classNames = 'todo-list-item';
-
     if(done){
       classNames += ' done';
     }
